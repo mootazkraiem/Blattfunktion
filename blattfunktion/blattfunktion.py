@@ -64,41 +64,45 @@ def generate_text():
     signal_mapping = {}
 
     for row in sheet.iter_rows(values_only=True):
-        signal_name = row[0]
-        signal_replacement = row[1]
-        # Check if signal_name is not None
-        if signal_name is not None:
-            # Step 4: Search and replace in the text
-            text1 = text1.replace(signal_name, str(signal_replacement))
+        signal_mapping[row[0]] = row[1]
 
     # Step 2: Read the text from the entry1 and entry2 textboxes
     text1 = entry1.get("1.0", tkinter.END).strip()
     text2 = entry2.get("1.0", tkinter.END).strip()
 
     # Check if entry1 is equal to entry2
-    if text1=='':
+    if text1 == '':
         print_message("No requirement given")
         entry2.configure(state='normal')
         entry2.delete("1.0", tkinter.END)
         entry2.configure(state='disabled')
         return
-        
-    elif text1 == text2: 
-        print_message("Signal name XL file must've been wrong !")
+    elif text1 == text2:
+        print_message("Signal name XL file must've been wrong!")
         entry2.configure(state='normal')
         entry2.delete("1.0", tkinter.END)
         entry2.configure(state='disabled')
         return
 
-    # Step 5: Translate to English if the checkbox is checked
+    # Step 3: Iterate over signal names
+    for signal_name, signal_replacement in signal_mapping.items():
+        # Step 4: Check if signal_name is not None
+        if signal_name is not None:
+            # Step 5: Check if signal_replacement is not None
+            if signal_replacement is not None:
+                # Step 6: Search and replace in the text
+                text1 = text1.replace(signal_name, str(signal_replacement))
+
+    # Step 7: Translate to English if the checkbox is checked
     if translate_var.get():
         text1 = translate_to_english(text1)
 
-    # Step 6: Display the modified text in the entry2 textbox
+    # Step 8: Display the modified text in the entry2 textbox
     entry2.configure(state='normal')
     entry2.delete("1.0", tkinter.END)
     entry2.insert(tkinter.END, text1)
     entry2.configure(state='disabled')
+
 
 
 # Create the main application window
